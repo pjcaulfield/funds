@@ -2,16 +2,16 @@
 Web application to manage mutual funds.
 
 Entities:
- - Users (Oid, Name, Password)
- - Assets (Oid, AssetType, AssetId, Description)
- - Accounts (Oid, Name, AccountType, UserOid)
- - Holdings (Oid, AccountOid, AssetOid, Amount)
- - Entries (Oid, TxnOid, Date, Amount, SourceOid, HoldingOid)
- - Transactions (Oid, TxnId, TxnType, Date, Amount, UserOid)
- - SourceDests (Oid, UserOid, BankId, RoutingNumber, AssetType)
+ - Users (Oid, UserName <--, Password)
+ - Assets (Oid, AssetId <--, Description)
+ - Accounts (Oid, *UserOid, Name, AccountType, CashBalance)
+ - SecHoldings (Oid, *AccountOid, *AssetOid, AssetBalance)
+ - CashEntries (Oid, TxnOid, Date, Amount, *ExtCashAcctOid, *AccountOid)
+ - SecEntries (Oid, TxnOid, Date, *SecHoldingOid, AssetAmount)
+ - Transactions (Oid, TxnId <--, TxnType, Date, UserName, AccountName, CashAmount, AssetId, AssetAmount, ExtCashAcctShortName)
+ - ExtCashAccts (Oid, *UserOid, BankId, RoutingNumber)
  
  Codes
-  - AssetType (Cash, Security)
   - AccountType (BeforeTax, AfterTax)
   - TxnType (InjectCash, ExtractCash, BuyAssetWithCash, SellAssetForCash)
  
@@ -24,9 +24,8 @@ Entities:
       - ReportTransactions
   - User
       - OpenAccount
-      - AddSourceDest
+      - AddExtCashAcct
       - ViewPortfolio
-      - CloseAccount
   - Transactions
       - InjectCash
       - ExtractCash
@@ -34,5 +33,5 @@ Entities:
       - SellAssetForCash
       
 BusinessRules:
- - Cash is just a particular type of asset, and AssetId is the currency code
- - 
+ - Only one currency is in use for the whole system
+ - For a given account, only one asset of a given type can be held
